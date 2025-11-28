@@ -204,8 +204,22 @@ def main():
             if "upvote_ratio" not in m_df.columns: m_df["upvote_ratio"] = 1.0
             
             fig_cont = px.scatter(m_df, x="comments", y="score", color="upvote_ratio", log_x=True, log_y=True, color_continuous_scale="RdBu", range_color=[0.5, 1.0], title="Score vs Comments", hover_data=["title", "subreddit"])
-            fig_cont.update_traces(selected=dict(marker=dict(opacity=1.0, size=15, line=dict(width=2, color="white"))), unselected=dict(marker=dict(opacity=0.3)))
-            
+            fig_cont.update_traces(
+    # FIX: Removed the invalid 'line' dictionary entirely.
+    selected=dict(
+        marker=dict(
+            opacity=1.0,
+            size=15,
+            # The border line property is not allowed here
+        )
+    ),
+    # The unselected logic is correct
+    unselected=dict(
+        marker=dict(
+            opacity=0.3
+        )
+    )
+)
             event = st.plotly_chart(fig_cont, use_container_width=True, on_select="rerun", selection_mode="points")
             
             if event and event.selection["points"]:
