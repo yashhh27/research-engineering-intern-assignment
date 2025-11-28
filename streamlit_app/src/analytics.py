@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import streamlit as st
@@ -8,10 +9,19 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.cluster import KMeans
 from datetime import timedelta
 import re
+from openai import OpenAI
 # Import load_embed_model if needed for search, 
 # or pass the model in. For now, you can import it:
-from src.data_loader import load_embed_model
 
+# --- NEW HELPER: CLIENT GETTER (For internal use) ---
+def get_openai_client_analytics():
+    """Retrieves the OpenAI client (needed for query embedding)."""
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        api_key = st.secrets.get("OPENAI_API_KEY")
+    if not api_key:
+        return None
+    return OpenAI(api_key=api_key)
 
 def run_semantic_search(
     df: pd.DataFrame, 
@@ -22,9 +32,21 @@ def run_semantic_search(
     """
     Performs semantic search safely, handling filtered dataframes.
     """
-    model = load_embed_model()
-    # Normalize query so we can use dot product (faster)
-    query_emb = model.encode(query, convert_to_tensor=True, show_progress_bar=False, normalize_embeddings=True)
+    client = get_openai_client_analytics()
+    if not client:
+        st.error("Semantic search failed: OpenAI client not initialized. Check API key in Secrets.")
+        return pd.DataFrame()
+    try:
+        query_response = client.embeddings.create(
+            # CRITICAL: Use the same model as defined in data_loader.py
+            input=[query.replace("\n", " ").replace("\t", " ")],
+            model="text-embedding-3-small" 
+        )
+        # Convert response object to a NumPy vector
+        query_emb = np.array(query_response.data[0].embedding)
+    except Exception as e:
+        st.error(f"Error generating query embedding: {e}")
+        return pd.DataFrame()
 
     # --- CRITICAL FIX: DATA ALIGNMENT ---
     # Case 1: User is searching the FULL dataset
@@ -44,15 +66,13 @@ def run_semantic_search(
             return pd.DataFrame()
 
     # Compute Dot Product (Faster than Cosine Sim if normalized)
-    scores = util.dot_score(query_emb, active_embeddings)[0]
+    scores = np.dot(active_embeddings, query_emb)
 
     # Get Top K
     # We use min() to handle cases where the filtered result < Top K
-    k = min(top_k, len(active_embeddings))
-    top_results = scores.topk(k)
+    top_indices = np.argsort(scores)[::-1][:top_k]
+    top_scores = scores[top_indices]
     
-    top_indices = top_results.indices.cpu().numpy()
-    top_scores = top_results.values.cpu().numpy()
 
     # Retrieve rows using iloc on the ACTIVE subset
     # Since active_embeddings corresponds 1:1 with df, we can use iloc directly
@@ -61,16 +81,7 @@ def run_semantic_search(
     
     return subset.sort_values("similarity_score", ascending=False)
 
-@st.cache_data(show_spinner=True)
-def compute_sentiment_textblob(texts: List[str]) -> np.ndarray:
-    """Old TextBlob sentiment (kept if you want it later)."""
-    out = []
-    for t in texts:
-        if not isinstance(t, str) or not t.strip():
-            out.append(0.0)
-        else:
-            out.append(TextBlob(t).sentiment.polarity)
-    return np.array(out)
+
 
 
 def attach_vader_sentiment(df_slice: pd.DataFrame) -> pd.DataFrame:
