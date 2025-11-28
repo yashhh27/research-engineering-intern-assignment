@@ -1,0 +1,16 @@
+# ---- Core ----
+numpy==1.26.4
+streamlit
+pandas
+numpy
+plotly
+scikit-learn
+sentence-transformers
+networkx
+openai
+python-dotenv
+vaderSentiment
+umap-learn
+
+
+

@@ -1,26 +1,13 @@
-# Python
+# Secrets
+.env
+
+# Python compilation trash
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
 
 # Virtual Environment
 venv/
-env/
+.venv/
 
-# macOS system files
+# Mac system files
 .DS_Store
-
-# Build artifacts
-artifacts/
-*.bin
-*.parquet
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Logs
-*.log
-
-# VSCode
-.vscode/
