@@ -95,15 +95,20 @@ def get_or_create_embeddings(texts: List[str]) -> np.ndarray:
     """
     Loads or computes embeddings using the global EMBEDDINGS_FILE path.
     """
+    st.write(f"📂 Looking for embeddings at: {EMBEDDINGS_FILE}")
     # A. Try loading from disk
     if EMBEDDINGS_FILE.exists():
+        st.write("✅ File found! Attempting to load...")
         try:
             embs = np.load(EMBEDDINGS_FILE)
             if len(embs) == len(texts):
+                st.success(f"loaded {len(embs)} embeddings from disk.")
                 return embs
-        except Exception:
+        except Exception as e:
+            st.error(f"❌ Error loading file: {e}")
             pass 
-
+    else:
+        st.error("⚠️ File NOT found on Cloud. Computing from scratch (This will crash)...")
     # B. Compute
     model = load_embed_model()
     embs = model.encode(

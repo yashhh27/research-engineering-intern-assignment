@@ -2,9 +2,15 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 from datetime import timedelta
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from datetime import timedelta
+
 def render_dataset_overview(df):
     """
     Renders the 'Macro' view with Active Authors & Viral Metrics.
+    OPTIMIZED: Uses lightweight groupby instead of resampling to prevent crashes.
     """
     st.header("📊 Dataset Overview")
     
@@ -14,7 +20,6 @@ def render_dataset_overview(df):
     if not df.empty:
         active_subs = df['subreddit'].nunique()
         active_authors = df['author'].nunique()
-        # Count posts with score > 100
         viral_posts = len(df[df['score'] > 100])
     else:
         active_subs, active_authors, viral_posts = 0, 0, 0
@@ -63,7 +68,6 @@ def render_dataset_overview(df):
             font-size: 32px;
             font-weight: 800;
         }
-        /* Color Accents */
         .card-blue { border-top: 4px solid #4DA6FF; }
         .card-purple { border-top: 4px solid #AB63FA; }
         .card-orange { border-top: 4px solid #FF9F1C; }
@@ -71,8 +75,7 @@ def render_dataset_overview(df):
     </style>
     """, unsafe_allow_html=True)
 
-    # --- 3. Render HTML Cards (One Single Block) ---
-    # Make sure this f-string is copied as one continuous block
+    # --- 3. Render HTML Cards ---
     st.markdown(f"""
     <div class="metric-container">
         <div class="metric-card card-blue">
@@ -98,86 +101,83 @@ def render_dataset_overview(df):
     </div>
     """, unsafe_allow_html=True)
 
-    # --- 4. Charts ---
+    # --- 4. Charts (CRASH FIX HERE) ---
     if not df.empty:
-        daily_counts = df.set_index('timestamp').resample('D').size().reset_index(name='posts')
-        
-        # Area Chart
-        fig_global = px.area(
-            daily_counts, x='timestamp', y='posts',
-            title="📈 Global Activity Volume",
-            labels={'timestamp': 'Date', 'posts': 'Volume'},
-            template="plotly_dark",
-            height=300
-        )
-        fig_global.update_traces(fillcolor="rgba(77, 166, 255, 0.2)", line=dict(color="#4DA6FF", width=2))
-        
-        # Peak Annotation
-        if not daily_counts.empty:
-            peak_row = daily_counts.loc[daily_counts['posts'].idxmax()]
-            fig_global.add_annotation(
-                x=peak_row['timestamp'], y=peak_row['posts'],
-                text=f"Peak: {peak_row['posts']}", showarrow=True, arrowhead=2,
-                arrowcolor="#FF4B4B", ax=0, ay=-40, bgcolor="#1E1E1E", bordercolor="#FF4B4B"
-            )
-
-        st.plotly_chart(fig_global, use_container_width=True)
-
-        # Weekly & Subreddit Charts
-        col_charts_1, col_charts_2 = st.columns(2)
-        with col_charts_1:
-            df['day_name'] = df['timestamp'].dt.day_name()
-            day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            day_counts = df['day_name'].value_counts().reindex(day_order).reset_index()
-            day_counts.columns = ['Day', 'Count']
+        try:
+            # FIX: Use groupby('date') instead of set_index().resample()
+            # This avoids creating a massive memory-hogging index
+            daily_counts = df.groupby("date").size().reset_index(name="posts")
             
-            fig_days = px.bar(
-                day_counts, x='Day', y='Count', title="📅 Weekly Rhythm",
-                template="plotly_dark", color='Count', color_continuous_scale='Viridis', height=350
+            # Area Chart
+            fig_global = px.area(
+                daily_counts, x='date', y='posts',
+                title="📈 Global Activity Volume",
+                labels={'date': 'Date', 'posts': 'Volume'},
+                template="plotly_dark",
+                height=300
             )
-            fig_days.update_layout(showlegend=False, xaxis_title=None)
-            st.plotly_chart(fig_days, use_container_width=True)
+            fig_global.update_traces(fillcolor="rgba(77, 166, 255, 0.2)", line=dict(color="#4DA6FF", width=2))
+            
+            # Peak Annotation
+            if not daily_counts.empty:
+                peak_row = daily_counts.loc[daily_counts['posts'].idxmax()]
+                fig_global.add_annotation(
+                    x=peak_row['date'], y=peak_row['posts'],
+                    text=f"Peak: {peak_row['posts']}", showarrow=True, arrowhead=2,
+                    arrowcolor="#FF4B4B", ax=0, ay=-40, bgcolor="#1E1E1E", bordercolor="#FF4B4B"
+                )
 
-        with col_charts_2:
-            top_subs = df['subreddit'].value_counts().nlargest(10).reset_index()
-            top_subs.columns = ['subreddit', 'count']
-            top_subs = top_subs.sort_values('count', ascending=True)
+            st.plotly_chart(fig_global, use_container_width=True)
 
-            fig_subs = px.bar(
-                top_subs, x='count', y='subreddit', orientation='h', title="🏆 Top 10 Active Subreddits",
-                template="plotly_dark", color='count', color_continuous_scale='Blues', text='count', height=350
-            )
-            fig_subs.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
-            st.plotly_chart(fig_subs, use_container_width=True)
+            # Weekly & Subreddit Charts
+            col_charts_1, col_charts_2 = st.columns(2)
+            with col_charts_1:
+                df['day_name'] = df['timestamp'].dt.day_name()
+                day_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+                day_counts = df['day_name'].value_counts().reindex(day_order).reset_index()
+                day_counts.columns = ['Day', 'Count']
+                
+                fig_days = px.bar(
+                    day_counts, x='Day', y='Count', title="📅 Weekly Rhythm",
+                    template="plotly_dark", color='Count', color_continuous_scale='Viridis', height=350
+                )
+                fig_days.update_layout(showlegend=False, xaxis_title=None)
+                st.plotly_chart(fig_days, use_container_width=True)
+
+            with col_charts_2:
+                top_subs = df['subreddit'].value_counts().nlargest(10).reset_index()
+                top_subs.columns = ['subreddit', 'count']
+                top_subs = top_subs.sort_values('count', ascending=True)
+
+                fig_subs = px.bar(
+                    top_subs, x='count', y='subreddit', orientation='h', title="🏆 Top 10 Active Subreddits",
+                    template="plotly_dark", color='count', color_continuous_scale='Blues', text='count', height=350
+                )
+                fig_subs.update_layout(showlegend=False, xaxis_title=None, yaxis_title=None)
+                st.plotly_chart(fig_subs, use_container_width=True)
+        
+        except Exception as e:
+            st.warning(f"Could not render charts: {e}")
             
     st.markdown("---")
-    
+
 def generate_context_links(query: str, peak_date_str: str) -> str:
     """
-    Generates markdown links to Google News and Wikipedia 
-    filtered specifically for the peak activity date.
+    Generates markdown links to Google News and Wikipedia.
     """
     if not peak_date_str or peak_date_str == "None":
         return ""
 
     try:
-        # Parse the date string back to a datetime object
         p_date = pd.to_datetime(peak_date_str).date()
     except:
         return ""
 
-    # Create a 3-day window (Day before, Day of, Day after)
     start_window = (p_date - timedelta(days=1)).strftime("%m/%d/%Y")
     end_window = (p_date + timedelta(days=1)).strftime("%m/%d/%Y")
     
-    # URL Encoding the query
     q_safe = query.replace(" ", "+")
-    
-    # Google Search with Date Filter (tbs=cdr...)
-    # This syntax tells Google: "Search for X between Date A and Date B"
     google_url = f"https://www.google.com/search?q={q_safe}&tbs=cdr:1,cd_min:{start_window},cd_max:{end_window}&tbm=nws"
-    
-    # Wikipedia Current Events for that Month
     wiki_month = p_date.strftime("%B_%Y")
     wiki_url = f"https://en.wikipedia.org/wiki/Portal:Current_events/{wiki_month}"
 
