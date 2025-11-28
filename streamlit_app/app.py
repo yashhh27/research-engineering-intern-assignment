@@ -1,7 +1,9 @@
+import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-import os
+
 
 # --- IMPORT MODULES ---
 from src.data_loader import (
