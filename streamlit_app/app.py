@@ -95,13 +95,7 @@ def main():
             if not matched_df.empty:
                 matched_df = attach_vader_sentiment(matched_df)
 
-    col_search, col_k = st.columns([3, 1])
-    with col_search:
-        query = st.text_input("Topic Search:", placeholder="e.g., housing crisis, tech layoffs")
-    with col_k:
-        top_k = st.number_input("Top K", 10, 500, 50)
-
-    matched_df = pd.DataFrame()
+ 
 
     if query.strip():
         with st.spinner(f"Searching for '{query}'..."):
