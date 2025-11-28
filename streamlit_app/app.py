@@ -70,11 +70,30 @@ def main():
     render_dataset_overview(df_filtered)
 
     # 4. SEMANTIC SEARCH
+    # 4. SEMANTIC SEARCH
     st.header("1. Semantic Search on Posts")
     
-    with st.spinner("Loading semantic engine..."):
-        # We pass the raw text list to the embedding function
-        all_embeddings = get_or_create_embeddings(df["text_col"].tolist())
+    # MOVED: Only initialize variable, don't load model yet
+    all_embeddings = None 
+
+    col_search, col_k = st.columns([3, 1])
+    with col_search:
+        query = st.text_input("Topic Search:", placeholder="e.g., housing crisis, tech layoffs")
+    with col_k:
+        top_k = st.number_input("Top K", 10, 500, 50)
+
+    matched_df = pd.DataFrame()
+
+    if query.strip():
+        # LAZY LOAD: Model only loads here, AFTER user types
+        with st.spinner("Loading AI model & Searching..."):
+            if all_embeddings is None:
+                all_embeddings = get_or_create_embeddings(df["text_col"].tolist())
+                
+            matched_df = run_semantic_search(df_filtered, all_embeddings, query, top_k=int(top_k))
+            
+            if not matched_df.empty:
+                matched_df = attach_vader_sentiment(matched_df)
 
     col_search, col_k = st.columns([3, 1])
     with col_search:

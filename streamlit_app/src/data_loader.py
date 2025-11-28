@@ -86,7 +86,7 @@ def load_dataset() -> pd.DataFrame:
     return df
 
 # --- EMBEDDINGS MODEL ---
-@st.cache_resource(show_spinner=False)
+@st.cache_resource(show_spinner=False, ttl=3600, max_entries=1)
 def load_embed_model():
     return SentenceTransformer(EMBED_MODEL_NAME)
 
