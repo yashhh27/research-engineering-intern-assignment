@@ -104,6 +104,8 @@ def get_or_create_embeddings(texts: List[str]) -> np.ndarray:
             if len(embs) == len(texts):
                 st.success(f"loaded {len(embs)} embeddings from disk.")
                 return embs
+            else:
+                st.toast("⚠️ Cache file exists but shape mismatch!", icon="⚠️")
         except Exception as e:
             st.error(f"❌ Error loading file: {e}")
             pass 
