@@ -26,6 +26,7 @@ def get_openai_client():
         return None
         
     return OpenAI(api_key=api_key)
+
 def generate_query_insight_style_summary(
     query: str,
     matched_df: pd.DataFrame,
@@ -33,7 +34,7 @@ def generate_query_insight_style_summary(
     sub_counts: pd.DataFrame,
 ) -> str:
     """Call GPT-4.1 to generate a narrative summary similar to the backend Query Insights."""
-
+    client = get_openai_client()
     total = len(matched_df)
     start = matched_df["timestamp"].min().date() if total > 0 else None
     end = matched_df["timestamp"].max().date() if total > 0 else None
@@ -115,6 +116,7 @@ def generate_llm_suggestions(df, query):
     """
     Uses the LLM to generate 3 specific questions based on the search results.
     """
+    client = get_openai_client()
     if df.empty:
         return ["Summarize the main themes", "What is the sentiment trend?", "Identify key opinion leaders"]
 
@@ -149,6 +151,7 @@ def generate_llm_suggestions(df, query):
 # NEW: STREAMING CHATBOT (Fixes "Slowness")
 # =========================================================
 def process_floating_query_stream(user_query, matched_df, chat_container):
+    client = get_openai_client()
     # 1. Calculate Context Stats
     if not matched_df.empty:
         max_score_idx = matched_df['score'].idxmax()
