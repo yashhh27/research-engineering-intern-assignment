@@ -3,7 +3,7 @@ import numpy as np
 from pathlib import Path
 from typing import List
 import streamlit as st
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 
 
 # =========================================================
@@ -93,39 +93,29 @@ def load_embed_model():
 @st.cache_resource(show_spinner=False)
 def get_or_create_embeddings(texts: List[str]) -> np.ndarray:
     """
-    Loads or computes embeddings using the global EMBEDDINGS_FILE path.
+    FOR CLOUD DEPLOYMENT: Forces the app to load embeddings from disk (npy).
+    Will crash gracefully with an error if the file is missing or corrupted.
     """
-    st.write(f"📂 Looking for embeddings at: {EMBEDDINGS_FILE}")
-    # A. Try loading from disk
-    if EMBEDDINGS_FILE.exists():
-        st.write("✅ File found! Attempting to load...")
-        try:
-            embs = np.load(EMBEDDINGS_FILE)
-            if len(embs) == len(texts):
-                st.success(f"loaded {len(embs)} embeddings from disk.")
-                return embs
-            else:
-                st.toast("⚠️ Cache file exists but shape mismatch!", icon="⚠️")
-        except Exception as e:
-            st.error(f"❌ Error loading file: {e}")
-            pass 
-    else:
-        st.error("⚠️ File NOT found on Cloud. Computing from scratch (This will crash)...")
-    # B. Compute
-    model = load_embed_model()
-    embs = model.encode(
-        texts, 
-        convert_to_tensor=False, 
-        show_progress_bar=True,
-        batch_size=32,           
-        normalize_embeddings=True 
-    )
     
-    # C. Save
-    try:
-        np.save(EMBEDDINGS_FILE, embs)
-    except Exception:
-        pass
-        
-    return embs
+    # 1. Check if the committed file is present
+    if not EMBEDDINGS_FILE.exists():
+        st.error(f"⚠️ Embeddings file not found on server: {EMBEDDINGS_FILE}")
+        st.info("CRITICAL: You must commit 'embeddings.npy' to your data folder.")
+        # CRASH GRACEFULLY: Stop here to prevent memory spike
+        st.stop() 
 
+    # 2. Load the file from disk
+    try:
+        embs = np.load(EMBEDDINGS_FILE)
+    except Exception as e:
+        st.error(f"❌ Error loading cached file. File may be corrupted. Error: {e}")
+        st.stop()
+    
+    # 3. Check Data Integrity
+    if len(embs) != len(texts):
+        st.error(f"❌ Embeddings size mismatch! Cached file has {len(embs)} rows, but data has {len(texts)}.")
+        st.info("Please regenerate 'embeddings.npy' locally and push the new file.")
+        st.stop()
+
+    # If all checks pass
+    return embs
