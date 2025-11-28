@@ -11,7 +11,5 @@ openai
 python-dotenv
 vaderSentiment
 umap-learn
-textblob
-
-
-
+textblobtiktoken
+tiktoken
