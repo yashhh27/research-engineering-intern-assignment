@@ -4,13 +4,7 @@ from pathlib import Path
 from typing import List
 import streamlit as st
 from sentence_transformers import SentenceTransformer, util
-from dotenv import load_dotenv
-from openai import OpenAI
 
-import re
-load_dotenv()  # loads OPENAI_API_KEY from .env if present
-
-client = OpenAI()  # uses OPENAI_API_KEY from environment
 
 # =========================================================
 # CONFIG
@@ -23,10 +17,7 @@ EMBEDDINGS_FILE = PROJECT_ROOT / "data" / "embeddings.npy"
 
 EMBED_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
-st.set_page_config(
-    page_title="SimPPL – Social Media Explorer",
-    layout="wide",
-)
+
 
 # =========================================================
 # DATA LOADING + PREPROCESSING
