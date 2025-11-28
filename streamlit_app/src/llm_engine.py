@@ -6,7 +6,26 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
-client = OpenAI() # Assumes api key in env
+def get_openai_client():
+    """
+    Retrieves the API key from Environment or Streamlit Secrets.
+    Returns None if missing, preventing the app from crashing.
+    """
+    # 1. Try Environment Variable (Local .env)
+    api_key = os.getenv("OPENAI_API_KEY")
+    
+    # 2. Try Streamlit Secrets (Cloud)
+    if not api_key:
+        try:
+            api_key = st.secrets["OPENAI_API_KEY"]
+        except (FileNotFoundError, KeyError):
+            pass
+            
+    # 3. Return Client or None
+    if not api_key:
+        return None
+        
+    return OpenAI(api_key=api_key)
 def generate_query_insight_style_summary(
     query: str,
     matched_df: pd.DataFrame,
