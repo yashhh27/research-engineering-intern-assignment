@@ -7,7 +7,8 @@ from openai import OpenAI
 from tqdm import tqdm
 import os
 import tiktoken
-
+from dotenv import load_dotenv
+load_dotenv()
 # =========================================================
 # CONFIG
 # =========================================================

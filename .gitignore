@@ -11,3 +11,4 @@ venv/
 
 # Mac system files
 .DS_Store
+streamlit_app/data/embeddings_openai.npy
