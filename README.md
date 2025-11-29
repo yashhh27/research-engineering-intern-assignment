@@ -141,12 +141,13 @@ The following screenshots illustrate the dashboard’s functionality:
 
    ```bash
    git clone [https://github.com/yashhh27/research-engineering-intern-assignment.git]
-   cd streamlit_app
+
    ```
 
 2. **Ensure Your Dataset is Included:**
    
    - For a small, static dataset, place your `data.jsonl` file in the project root.
+
 
 3. **Create and Activate a Virtual Environment (Optional but Recommended):**
 
@@ -174,7 +175,13 @@ The following screenshots illustrate the dashboard’s functionality:
    wikipedia
    scikit-learn
    ```
+5. **Pre-Compute Embeddings:**
 
+   - Precompute Embeddings from `data.jsonl` file and store as `embeddings_openai.npy` file in the `/data` directory.
+   
+     ```bash
+     python3 precompute_embeddings.py
+     ```
 ## Usage
 
 1. **Run the Dashboard Locally:**
