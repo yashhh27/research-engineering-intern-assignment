@@ -1,109 +1,190 @@
-# SimPPL Social Media Explorer: Investigative Dashboard
-It fulfills all requirements of the SimPPL Research Engineer Intern assignment by integrating Semantic Search (OpenAI Embeddings), GenAI Summaries, and advanced Multimodal and Network analysis into an intuitive investigative tool.
+# SimPPL – Social Media Explorer
+Investigative Analytics & Narrative Intelligence Dashboard
 
+An interactive Streamlit-based investigative dashboard built for the SimPPL Research Engineer Intern Assignment.
+The system integrates semantic search, GenAI summaries, temporal analysis, multimodal analytics, and network visualization into a unified exploration tool.
+
+# App Demo
 Video_Demo: (https://drive.google.com/file/d/1v_7l2uXzMzHpa66vR1zNKbQhO8ys40d6/view?usp=sharing)
 
+## Table of Contents
 
+- [Overview](#overview)
+- [Features](#Dashboard Structure & Data Storytelling)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Conclusion](#conclusion)
 
-# System Design and Architecture (The "How")
+## Overview
 
-The project uses a Microservice Simulation approach to solve the critical memory (OOM) constraint of cloud platforms:
+**Dataset Snapshot**
+Instant visibility into post volume, active authors, viral content, and subreddit coverage.
 
-1. UI Layer (streamlit_app/app.py): Handles filtering, layout, and user input. It remains lightweight.
+**Trends & Timing**
+Time-series views expose posting surges, weekly patterns, and keyword spikes.
 
-2. Model/Data Layer (Serverless): All memory-intensive operations (embedding generation, model loading) are pushed to the OpenAI API via the src/data_loader.py module. This eliminates the fatal 1GB RAM crash by ensuring the server only stores the small, pre-calculated data arrays.
+**Semantic Search**
+Embedding-based natural language search retrieves contextually relevant posts beyond keywords.
 
-3. Modular Structure: The code is cleanly decoupled into specific directories (src/analytics, src/ui_components, src/llm_engine) for maintainability and future scaling.
+**AI Briefings**
+Automated summaries convert complex engagement patterns into clear, event-linked insights.
 
+**Topics & Sentiment**
+Clustering and UMAP reveal narrative groups, with sentiment breakdown across clusters.
 
-# Local Setup & Run Instructions
+**Controversy Analysis**
+Identifies viral hits versus polarizing debates using engagement and approval signals.
 
-Follow these steps to clone the repository and run the application locally.
+Network & Media Impact
+Author–subreddit networks and media-type analysis uncover influence and engagement drivers.
 
-Prerequisites
+## Features
+The dashboard is organized into six investigative tabs, each telling a different part of the data story.
 
-Python 3.9+
+# Tab 1:  Trends & Volume
+ - Post volume over time
+ - Keyword frequency trends
+Identifies temporal triggers and early amplifiers of narratives.
 
-Git and Git LFS must be installed (due to the 103MB embedding file).
-Step 1: Clone and Install Dependencies
-1. Clone the repository (the Git LFS client handles the large embedding file)
-git clone [https://github.com/yourusername/research-engineering-intern-assignment.git](https://github.com/yourusername/research-engineering-intern-assignment.git)
-cd research-engineering-intern-assignment
+# Tab 2:  AI Briefing
+ - GPT-powered executive summary
+ - Offline event linking
+Translates raw metrics into human-readable intelligence reports.
 
-2. Create and activate virtual environment
-python -m venv venv
-./venv/Scripts/activate  # On Windows PowerShell
-source venv/bin/activate # On Linux/Mac
+ # Tab 3:  Clusters & Topics
+ - UMAP topic projection
+ - Sentiment per cluster
+Reveals how narratives fracture into sub-topics and emotional tones.
 
-3. Install required libraries
-pip install -r requirements.txt
+# Tab 4:  Controversy & Sources
+ - Approval vs comment controversy matrix
+ - Source distribution sunburst
+Distinguishes viral consensus from polarizing debate.
 
+# Tab 5: 🕸️ Network
+ - Author–Subreddit bipartite graph
+Identifies super-spreaders and coordination behavior.
 
-Step 2: Configure OpenAI API Key
+# Tab 6: 📸 Media Impact
+ - Media-type distribution
+ - High-engagement image gallery
+Shows how visual vs text content drives engagement.
 
-You must set your OpenAI API key so the app can generate new embeddings (if needed) and run the GPT-4 features.
+# Assignment Requirements Coverage
+ - Semantic Search (OpenAI Embeddings)
+ - GenAI Summarization
+ - Multimodal Analysis
+ - Network Analysis
+ - Professional documentation
 
-Create a file named .env in your project root.
+## Screenshots
 
-Add your secret key:
+The following screenshots illustrate the dashboard’s functionality:
 
-OPENAI_API_KEY="sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+1. **Time Series Plot**  
+   ![Dataset Overview](screenshots/1.png)  
+   *High-level metrics that frame the scale and engagement of the dataset.*
 
- Step 3: Generate Initial Embeddings Cache (MANDATORY)
+2. **Global Activity & Participation Overview**  
+   ![Global Activity & Participation Overview](screenshots/2.png)  
+   *Time-series plot showing overall posting volume over time, highlighting major activity peaks, alongside weekly posting rhythm and the top active subreddits contributing to the discussion.*
 
-You must run the embedding generation locally once. This will use the OpenAI API to create the small, token-safe NumPy file (embeddings_openai.npy) that the live dashboard relies on.
+3. **Semantic Search on Posts**  
+   ![Semantic Search on Posts](screenshots/3.png)  
+   *Embedding-powered natural language search that retrieves contextually relevant posts and displays searchable results with sentiment, engagement, and direct source links.*
 
- Run the app. The first run will automatically compute the embeddings
- (This process takes a few minutes and uses API credits)
-streamlit run streamlit_app/app.py
+4. **Trends & Volume**  
+   ![Trends & Volume](screenshots/4.png)  
+   *Time-series visualization of post volume over time for semantically matched posts, broken down by subreddit to highlight how different communities contribute to the narrative across key time periods.*
 
- Step 4: Run the Application
+5. **Keyword Trends**  
+   ![Keyword Trends](screenshots/5.png)  
+   *Temporal frequency trends of selected keywords extracted from semantically relevant posts, illustrating how specific terms rise and fall in prominence over time.*
 
-The application will now load instantly on subsequent runs, relying on the newly created cache file.
+6. **AI Briefing with Offline Event Context**  
+   ![AI Briefing with Offline Event Context](screenshots/6.png)  
+   *Automated AI summary explaining engagement patterns, with external news and Wikipedia links to contextualize key activity spikes.*
 
-streamlit run streamlit_app/app.py
+7. **Topic Clusters**  
+   ![Topic Clusters](screenshots/7.png)  
+   *UMAP projection of semantically similar posts, revealing latent topic clusters and how conversations group into distinct narrative themes.*
 
+8. **Sentiment Distribution Across Topic Clusters**  
+   ![Sentiment Distribution Across Topic Clusters](screenshots/8.png)  
+   *Stacked bar chart showing the proportion of positive, negative, and neutral sentiment within each semantic topic cluster.*
 
-# 📊 Features and Data Storytelling
+9. **Controversy Matrix: Engagement vs Debate**  
+   ![Controversy Matrix: Engagement vs Debate](screenshots/9.png)  
+   *Scatter plot comparing post score and comment volume, distinguishing viral consensus content from highly debated and polarizing “flame-war” discussions.*
 
-The dashboard is structured into six tabs to tell a comprehensive story about the data.
- Tab 1: 📈 Trends & Volume
+10. **Content Composition & Media Impact**  
+   ![Content Composition & Media Impact](screenshots/10.png)  
+   *Sunburst chart showing the breakdown of content types (original discussion, external links, images, video) across subreddits, with a dropdown control to segment the view by count or comment volume.*
 
-Feature: Posts Over Time (Tracks volume across subreddits) and Keyword Trends (Tracks frequency of key terms).
+11. **Network Analysis: Author–Subreddit Graph**  
+   ![Network Analysis: Author–Subreddit Graph](screenshots/11.png)  
+   *Bipartite network visualization mapping relationships between authors and subreddits, highlighting highly connected communities and potential influence hubs.*
 
-Story: Identifies the Temporal Trigger of a narrative and shows which communities were the earliest and largest amplifiers.
+12. **Multimodal Analysis: Media Impact**  
+   ![Multimodal Analysis: Media Impact](screenshots/12.png)  
+   *Analysis of how different content modalities drive engagement, highlighting the outsized impact of images and external links compared to text and video.*
 
+13. **Guided AI Analysis & Suggested Queries**  
+   ![Guided AI Analysis & Suggested Queries](screenshots/13.png)  
+   *AI-powered assistant interface offering guided questions to help users explore sentiment, ideology, and thematic structure in the dataset.*
 
- Tab 2: 🧠 AI Briefing
+ ## Installation
 
-Feature: AI Summary Generator (GPT-4 narrative report) and Offline Events Button (Google News/Wikipedia links).
+1. **Clone the Repository:**
 
-Story: Synthesizes complex statistics into an executive summary and connects the online data to real-world events.
+   ```bash
+   git clone [https://github.com/yashhh27/research-engineering-intern-assignment.git]
+   cd streamlit_app
+   ```
 
+2. **Ensure Your Dataset is Included:**
+   
+   - For a small, static dataset, place your `data.jsonl` file in the project root.
 
-Tab 3: 🧬 Clusters & Topics
+3. **Create and Activate a Virtual Environment (Optional but Recommended):**
 
-Feature: UMAP Projection and Sentiment by Cluster (Stacked bar chart).
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
+   ```
 
-Story: Uses AI (UMAP/K-Means) to identify how the main search topic fractures into sub-narratives, and provides the sentiment breakdown (Positive/Negative) of each discovered group.
+4. **Install Dependencies:**
 
+   ```bash
+   pip install -r requirements.txt
+   ```
 
- Tab 4: ⚔️ Controversy & Sources
+   *Example `requirements.txt`:*
+   ```
+   streamlit
+   pandas
+   plotly
+   textblob
+   networkx
+   pyvis
+   transformers
+   sentence-transformers
+   wikipedia
+   scikit-learn
+   ```
 
-Feature: Controversy Matrix (Score vs. Comments) and Source of Truth (Sunburst).
+## Usage
 
-Story: Differentiates between Viral Hits (high engagement) and Controversial/Flame Wars (low approval, high debate). The Sunburst shows whether the narrative is driven by Original Discussion or External Links (Source Analysis).
+1. **Run the Dashboard Locally:**
 
+   ```bash
+    streamlit run streamlit_app/app.py
+   ```
 
-Tab 5: 🕸️ Network
+## Conclusion
 
-Feature: Author-Subreddit Network Graph.
+The Reddit Analysis Dashboard exemplifies a blend of data visualization, machine learning, and web deployment, meeting the SimPPL assignment's objectives. This project showcases my ability to transform raw social media data into actionable insights through a user-friendly interface.
 
-Story: Visualizes the bipartite graph showing which Authors post into which Subreddits, revealing potential coordinated behavior or "super-spreaders" .
+Author: Yash Savaliya
 
-
- Tab 6: 📸 Media Impact
-
-Feature: Bar Chart of Media Distribution (Images, Links, Video, Text) and Image Gallery (for high-voted images).
-
-Story: Fulfills the Multimodal Analysis requirement by answering which type of media (e.g., visual content vs. text) is most effective at generating high scores/engagement.
+Date: November 27, 2025
