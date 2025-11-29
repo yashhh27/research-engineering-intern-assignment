@@ -17,25 +17,19 @@ Video_Demo: (https://drive.google.com/file/d/1v_7l2uXzMzHpa66vR1zNKbQhO8ys40d6/v
 
 ## Overview
 
-**Dataset Snapshot**
-Instant visibility into post volume, active authors, viral content, and subreddit coverage.
+**Dataset Snapshot:** Instant visibility into post volume, active authors, viral content, and subreddit coverage.
 
-**Trends & Timing**
+**Trends & Timing: **
 Time-series views expose posting surges, weekly patterns, and keyword spikes.
-
-**Semantic Search**
+**Semantic Search:**
 Embedding-based natural language search retrieves contextually relevant posts beyond keywords.
-
-**AI Briefings**
+**AI Briefings:**
 Automated summaries convert complex engagement patterns into clear, event-linked insights.
-
-**Topics & Sentiment**
+**Topics & Sentiment:**
 Clustering and UMAP reveal narrative groups, with sentiment breakdown across clusters.
-
-**Controversy Analysis**
+**Controversy Analysis:**
 Identifies viral hits versus polarizing debates using engagement and approval signals.
-
-Network & Media Impact
+**Network & Media Impact:**
 Author–subreddit networks and media-type analysis uncover influence and engagement drivers.
 
 ## Features
