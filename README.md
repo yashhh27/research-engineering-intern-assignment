@@ -148,15 +148,24 @@ The following screenshots illustrate the dashboard’s functionality:
    
    - For a small, static dataset, place your `data.jsonl` file in the project root.
 
+3. **Update your `OPENAI_API_KEY` AND `OPENAI_MODEL` in `.env`**
 
-3. **Create and Activate a Virtual Environment (Optional but Recommended):**
+   - Create a new .env file in root directory of the project.
+
+   ```bash
+      OPENAI_API_KEY=`your api key`
+      OPENAI_MODEL_NAME=`gpt-4.1`
+
+   ```
+
+4. **Create and Activate a Virtual Environment (Optional but Recommended):**
 
    ```bash
    python3 -m venv venv
    source venv/bin/activate  # On Windows use: venv\Scripts\activate
    ```
 
-4. **Install Dependencies:**
+5. **Install Dependencies:**
 
    ```bash
    pip install -r requirements.txt
@@ -175,10 +184,10 @@ The following screenshots illustrate the dashboard’s functionality:
    wikipedia
    scikit-learn
    ```
-5. **Pre-Compute Embeddings:**
+6. **Pre-Compute Embeddings:**
 
    - Precompute Embeddings from `data.jsonl` file and store as `embeddings_openai.npy` file in the `/data` directory.
-   
+
      ```bash
      python3 precompute_embeddings.py
      ```
