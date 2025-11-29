@@ -17,18 +17,24 @@ Video_Demo: (https://drive.google.com/file/d/1v_7l2uXzMzHpa66vR1zNKbQhO8ys40d6/v
 
 ## Overview
 
-**Dataset Snapshot:** Instant visibility into post volume, active authors, viral content, and subreddit coverage.
+### Dataset Snapshot  
+Instant visibility into post volume, active authors, viral content, and subreddit coverage.
 
-**Trends & Timing: **
-Time-series views expose posting surges, weekly patterns, and keyword spikes.
+**Trends & Timing:**
+ - Time-series views expose posting surges, weekly patterns, and keyword spikes.
+
 **Semantic Search:**
 Embedding-based natural language search retrieves contextually relevant posts beyond keywords.
+
 **AI Briefings:**
 Automated summaries convert complex engagement patterns into clear, event-linked insights.
+
 **Topics & Sentiment:**
 Clustering and UMAP reveal narrative groups, with sentiment breakdown across clusters.
+
 **Controversy Analysis:**
 Identifies viral hits versus polarizing debates using engagement and approval signals.
+
 **Network & Media Impact:**
 Author–subreddit networks and media-type analysis uncover influence and engagement drivers.
 
@@ -38,31 +44,31 @@ The dashboard is organized into six investigative tabs, each telling a different
 # Tab 1:  Trends & Volume
  - Post volume over time
  - Keyword frequency trends
-Identifies temporal triggers and early amplifiers of narratives.
+ - Identifies temporal triggers and early amplifiers of narratives.
 
 # Tab 2:  AI Briefing
  - GPT-powered executive summary
  - Offline event linking
-Translates raw metrics into human-readable intelligence reports.
+ - Translates raw metrics into human-readable intelligence reports.
 
  # Tab 3:  Clusters & Topics
  - UMAP topic projection
  - Sentiment per cluster
-Reveals how narratives fracture into sub-topics and emotional tones.
+ - Reveals how narratives fracture into sub-topics and emotional tones.
 
 # Tab 4:  Controversy & Sources
  - Approval vs comment controversy matrix
  - Source distribution sunburst
-Distinguishes viral consensus from polarizing debate.
+ - Distinguishes viral consensus from polarizing debate.
 
 # Tab 5: 🕸️ Network
  - Author–Subreddit bipartite graph
-Identifies super-spreaders and coordination behavior.
+ - Identifies super-spreaders and coordination behavior.
 
 # Tab 6: 📸 Media Impact
  - Media-type distribution
  - High-engagement image gallery
-Shows how visual vs text content drives engagement.
+ - Shows how visual vs text content drives engagement.
 
 # Assignment Requirements Coverage
  - Semantic Search (OpenAI Embeddings)
