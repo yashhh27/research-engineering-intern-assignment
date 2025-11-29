@@ -10,7 +10,7 @@ Video_Demo: (https://drive.google.com/file/d/1v_7l2uXzMzHpa66vR1zNKbQhO8ys40d6/v
 ## Table of Contents
 
 - [Overview](#overview)
-- [Features](#Dashboard Structure & Data Storytelling)
+- [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Conclusion](#conclusion)
