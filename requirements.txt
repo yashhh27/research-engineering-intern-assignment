@@ -11,3 +11,4 @@ python-dotenv>=1.0
 tqdm>=4.66
 networkx>=3.2
 vaderSentiment
+umap-learn
